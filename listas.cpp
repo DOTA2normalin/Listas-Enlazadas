@@ -1,100 +1,141 @@
 #include <iostream>
 using namespace std;
 
+template<typename T>
 class Nodo
 {
-private:
-	int dato;
+public:
+	T dato;
 	Nodo * next;
 public:
-	Nodo(int x,Nodo *sig=NULL) {
-        this->dato=x;
-        this->next=sig;
+	Nodo(T x) {
+        dato=x;
+        next=NULL;
     }
-	void setdato(int a) {
-		dato = a;
-	}
-	void setNodo(Nodo* siguiente) {
-		next = siguiente;
-	}
-	int getdato() {
-		return dato;
-	}
-	Nodo* getNodo() {
-		return next;
-	}
-	~Nodo() {
-
-	}
-    friend class LinkedList;
+    void imprimir(){
+        cout<<dato<<"-->";
+    }
 };
 
-class LinkedList:public Nodo{
+
+template<typename T>
+class LinkedList{
 private:
-	Nodo* primero;
-	Nodo* actual;
+	Nodo<T>* head;
+    Nodo<T>* m_nodes;
 public: 
-	LinkedList() {
-		this->primero = NULL;
-		this->actual = NULL;
-	}
-    bool ListaVacia() {
-		return(this->primero = NULL);
-	}
-	void insertar(int v) {
-		Nodo* nuevo = new Nodo(v);
-		if (ListaVacia()) {
-			this->next = nuevo;
-		}
-		else {
-			this->actual->next = nuevo;
-		}
-		this->actual = nuevo;
-	}
-	void mostrar() {
-		Nodo* tmp = this->primero;
-		while (tmp) {
-			cout << tmp->dato<< "-->";
-			tmp = tmp->next;
-		}
-		cout << "NULL\n";
-	}
-    Nodo *borrar(Nodo* LinkedList, int elemento){
-        if(LinkedList!=NULL){
-            Nodo *aux_borrar;
-            Nodo *anterior=NULL;
+	LinkedList();
+	//~LinkedList();
+	void add(T);
+    void insertar(T);
+	void del(T);
+	void print();
+};
+template <typename T>
+LinkedList<T>::LinkedList(){
+	m_nodes=0;
+	head=NULL;
+}
 
-            aux_borrar=LinkedList;
-
-            while((aux_borrar!=NULL)&& (aux_borrar)!=elemento)
-            {
-                anterior=aux_borrar;
-                aux_borrar=aux_borrar->next;
+template<typename T>
+void LinkedList<T>::add(T data_)
+{
+    Nodo<T> *new_node = new Nodo<T> (data_);
+    Nodo<T> *temp = head;
+ 
+    if (!head) {
+        head = new_node;
+    } else {
+        if (head->dato > data_) {
+            new_node->next = head;
+            head = new_node;
+        } else {
+            while ((temp->next != NULL) && (temp->next->dato < data_)) {
+                temp = temp->next;
             }
-
-            if(aux_borrar==NULL){
-                cout<<"elemento no ha sido encontrado";
-            }
-            else if(anterior==NULL){
-                LinkedList=LinkedList->next;
-                delete aux_borrar;
-            }
-            else{
-                anterior->next=aux_borrar->next;
-                delete aux_borrar;
-            }
+            new_node->next = temp->next;
+            temp->next = new_node;
         }
     }
-};
+    m_nodes++;
+}
 
+
+template<typename T>
+void LinkedList<T>::insertar(T data_){
+    Nodo<T> *new_node = new Nodo<T> (data_);
+    Nodo<T> *temp = head;
+ 
+    if (!head) {
+        head = new_node;
+    } else {
+        if (head->dato > data_) {
+            new_node->next = head;
+            head = new_node;
+        } else {
+            while ((temp->next != NULL) && (temp->next->dato < data_)) {
+                temp = temp->next;
+            }
+            new_node->next = temp->next;
+            temp->next = new_node;
+        }
+    }
+    m_nodes++;
+}
+template<typename T>
+void LinkedList<T>::del(T data_)
+{
+    Nodo<T> *temp = head;
+    Nodo<T> *temp1 = head->next;
+ 
+    int cont = 0;
+ 
+    if (head->dato == data_) {
+        head = temp->next;
+    } else {
+        while (temp1) {
+            if (temp1->dato == data_) {
+                Nodo<T> *aux_node = temp1;
+                temp->next = temp1->next;
+                delete aux_node;
+                cont++;
+                m_nodes--;
+            }
+            temp = temp->next;
+            temp1 = temp1->next;
+        }
+    }
+ 
+    if (cont == 0) {
+        cout << "No existe el dato " << endl;
+    }
+}
+
+template<typename T>
+void LinkedList<T>::print()
+{
+    Nodo<T> *temp = head;
+    
+    if (!head) {
+            cout << "Lista no inicializada " << endl;
+        } else {
+            while (temp) {
+                temp->imprimir();
+                if (!temp->next) cout << "NULL";
+                    temp = temp->next;
+            }
+    }
+    cout << endl << endl;
+}
 int main()
 {
-    LinkedList lst;
-    lst.insertar(1);
-    lst.insertar(2);
-    lst.insertar(3);
-    lst.insertar(4);
-    lst.borrar(LinkedList,2);
-    lst.mostrar();
+    LinkedList<int> lst;
+    lst.add(1);
+    lst.add(2);
+    lst.add(3);
+    lst.add(4);
+    lst.insertar(-2);
+    //lst.del(2);
+    lst.print();
 	return 0;
 }
